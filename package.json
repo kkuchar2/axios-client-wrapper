@@ -1,5 +1,5 @@
 {
-  "name": "kuchkr-axios-client",
+  "name": "axios-client-wrapper",
   "version": "1.0.1",
   "description": "Wrapper around axios requests to supplement redux calls, request state handling and response processing",
   "main": "dist/index.js",
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kkuchar2/kuchkr-axios-client.git"
+    "url": "git+https://github.com/kkuchar2/axios-client-wrapper.git"
   },
   "keywords": [
     "axios",
@@ -20,9 +20,9 @@
   "author": "Krzysztof Kucharski",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/kkuchar2/kuchkr-axios-client/issues"
+    "url": "https://github.com/kkuchar2/axios-client-wrapper/issues"
   },
-  "homepage": "https://github.com/kkuchar2/kuchkr-axios-client#readme",
+  "homepage": "https://github.com/kkuchar2/axios-client-wrapper#readme",
   "devDependencies": {
     "@babel/core": "^7.15.5",
     "@babel/plugin-proposal-class-properties": "^7.14.5",
