@@ -8,10 +8,12 @@
     "dist"
   ],
   "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
     "target": "es5",
     "module": "esnext",
     "lib": [
-      "es5",
+      "es2017",
       "dom"
     ],
     "types": [],
@@ -19,8 +21,6 @@
     "jsx": "react",
     "declaration": true,
     "sourceMap": true,
-    "outDir": "dist",
-    "rootDir": "src",
     "removeComments": true,
     "strict": true,
     "moduleResolution": "node",

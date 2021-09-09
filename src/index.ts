@@ -1,5 +1,2 @@
-// @/src/index.ts
-
-const Component = () => {};
-
-export default Component;
+export {sendPost, sendGet, sendFilePost } from "./client";
+export * from "./clientTypes";
