@@ -1,9 +1,9 @@
 import {AnyAction} from "@reduxjs/toolkit";
 import axios from "axios";
 import {Dispatch} from "redux";
-import Cookies from "universal-cookie/es6";
 
 import {Dictionary, OnFailArgs} from "./clientTypes";
+import Cookies from "universal-cookie";
 
 export const _sendPostNoCookies = async (url: string, body: Dictionary<any>) => axios.post(url, body);
 
@@ -45,24 +45,14 @@ export const _sendPostFileWithCookiesAndCsrf = async (url: string, file: File, o
     });
 };
 
+
+
 export const _sendGetNoCookies = async (url: string, params: Dictionary<string>) => {
-    let parametrizedUrl = url;
-
-    for (const [key, value] of Object.entries(params)) {
-        parametrizedUrl += `?${key}=${value}`;
-    }
-
-    return axios.get(parametrizedUrl, {headers: {'Accept': 'application/json'}});
+    return axios.get(composeUrl(url, params), {headers: {'Accept': 'application/json'}});
 };
 
 export const _sendGetWithCookiesAndCsrf = async (url: string, params: Dictionary<string>) => {
-    let parametrizedUrl = url;
-
-    for (const [key, value] of Object.entries(params)) {
-        parametrizedUrl += `?${key}=${value}`;
-    }
-
-    return axios.get(parametrizedUrl, {
+    return axios.get(composeUrl(url, params), {
         withCredentials: true,
         headers: {
             'Accept': 'application/json',
@@ -100,3 +90,13 @@ const createNetworkError = (source: string) => {
         generic: {type: "network_error", message: "NETWORK_ERROR", source}
     };
 };
+
+export const composeUrl = (url: string, params: Dictionary<string>) =>{
+    let parametrizedUrl = url;
+
+    for (const [key, value] of Object.entries(params)) {
+        parametrizedUrl += `?${key}=${value}`;
+    }
+
+    return parametrizedUrl;
+}
