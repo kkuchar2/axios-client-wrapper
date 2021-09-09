@@ -11,22 +11,23 @@ const EXTERNAL = Object.keys(pkg.devDependencies);
 
 export default {
   input: "src/index.ts",
-  output: {
-    dir: "dist",
-    sourcemap: true,
-    format: "esm",
-    preserveModules: true
-  },
+  output: [
+    {
+      file: pkg.main,
+      format: "cjs",
+      sourcemap: true
+    },
+    {
+      file: pkg.module,
+      format: "esm",
+      sourcemap: true
+    }
+  ],
   plugins: [
     peerDepsExternal(),
     resolve(),
     commonjs(),
-    typescript(),
-    babel({
-      extensions: EXTENSIONS,
-      babelHelpers: "inline",
-      include: EXTENSIONS.map(ext => `src/**/*${ext}`)
-    })
+    typescript({ useTsconfigDeclarationDir: true })
   ],
   external: EXTERNAL
 };
