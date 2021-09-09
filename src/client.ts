@@ -1,10 +1,6 @@
 import { Dispatch } from "redux";
 
-import {
-  FileRequestArgs,
-  GetRequestArgs,
-  PostRequestArgs,
-} from "./clientTypes";
+import { FileRequestArgs, GetRequestArgs, PostRequestArgs } from "./clientTypes";
 import {
   _handleErrors,
   _sendGetNoCookies,
@@ -34,9 +30,7 @@ export const sendPost = (args: PostRequestArgs) => {
     try {
       dispatch(onBefore({ path, data: body, errors: [] }));
 
-      const requestFunc = withAuthentication
-        ? _sendPostWithCookiesAndCsrf
-        : _sendPostNoCookies;
+      const requestFunc = withAuthentication ? _sendPostWithCookiesAndCsrf : _sendPostNoCookies;
 
       const response = await requestFunc(buildApiUrl(apiUrl, path), body);
 
@@ -67,9 +61,7 @@ export const sendGet = (args: GetRequestArgs) => {
     try {
       dispatch(onBefore({ path, data: params, errors: [] }));
 
-      const requestFunc = withAuthentication
-        ? _sendGetWithCookiesAndCsrf
-        : _sendGetNoCookies;
+      const requestFunc = withAuthentication ? _sendGetWithCookiesAndCsrf : _sendGetNoCookies;
 
       responseParser({
         path,
@@ -112,11 +104,7 @@ export const sendFilePost = (params: FileRequestArgs) => {
       responseParser({
         path,
         dispatch,
-        response: await requestFunc(
-          buildApiUrl(apiUrl, path),
-          file,
-          onUploadProgress
-        ),
+        response: await requestFunc(buildApiUrl(apiUrl, path), file, onUploadProgress),
         onSuccess,
         onFail,
       });

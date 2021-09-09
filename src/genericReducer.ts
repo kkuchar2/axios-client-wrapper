@@ -31,9 +31,7 @@ export interface BeforeRequestPayload {
   path: string;
 }
 
-export const createBaseRequestSlice = <
-  Reducers extends SliceCaseReducers<BaseRequestSliceState>
->({
+export const createBaseRequestSlice = <Reducers extends SliceCaseReducers<BaseRequestSliceState>>({
   name = "",
   reducers,
 }: {
@@ -55,25 +53,14 @@ export const createBaseRequestSlice = <
         state.path = path;
       },
       onRequestSuccess: (state, action: PayloadAction<IResponsePayload>) => {
-        const {
-          errors = [],
-          path = "",
-          data = {},
-        } = action.payload ? action.payload : {};
+        const { errors = [], path = "", data = {} } = action.payload ? action.payload : {};
         state.errors = errors;
         state.path = path;
         state.requestState = RequestState.ResponseReceived;
         state.responseData = data;
       },
-      onRequestFailed: (
-        state: BaseRequestSliceState,
-        action: PayloadAction<IResponsePayload>
-      ) => {
-        const {
-          errors = [],
-          path = "",
-          data = {},
-        } = action.payload ? action.payload : {};
+      onRequestFailed: (state: BaseRequestSliceState, action: PayloadAction<IResponsePayload>) => {
+        const { errors = [], path = "", data = {} } = action.payload ? action.payload : {};
         state.path = path;
         state.requestState = RequestState.ResponseReceived;
         state.responseData = data;
@@ -94,7 +81,7 @@ export const sendPostRequest = (
   apiUrl: string,
   path: string,
   body: object,
-  slice: Slice<BaseRequestSliceState>
+  slice: Slice<BaseRequestSliceState>,
 ) => {
   return sendPost({
     apiUrl: apiUrl,
@@ -110,7 +97,7 @@ export const sendPostRequest = (
 export const sendGetRequest = (
   apiUrl: string,
   path: string,
-  slice: Slice<BaseRequestSliceState>
+  slice: Slice<BaseRequestSliceState>,
 ) => {
   return sendGet({
     apiUrl: apiUrl,
@@ -130,7 +117,7 @@ export const sendFilePostRequest = (
   path: string,
   file: File,
   onUploadProgress: (progressEvent: any) => void = (evt) => {},
-  slice: Slice<BaseRequestSliceState>
+  slice: Slice<BaseRequestSliceState>,
 ) => {
   return sendFilePost({
     apiUrl: apiUrl,

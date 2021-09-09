@@ -8,10 +8,7 @@ import Cookies from "universal-cookie";
 export const _sendPostNoCookies = async (url: string, body: Dictionary<any>) =>
   axios.post(url, body);
 
-export const _sendPostWithCookiesAndCsrf = async (
-  url: string,
-  body: Dictionary<any>
-) => {
+export const _sendPostWithCookiesAndCsrf = async (url: string, body: Dictionary<any>) => {
   return axios.post(url, body, {
     withCredentials: true,
     headers: {
@@ -33,7 +30,7 @@ export const _sendPostFileNoCookies = async (url: string, file: File) => {
 export const _sendPostFileWithCookiesAndCsrf = async (
   url: string,
   file: File,
-  onUploadProgress: (progressEvent: any) => void
+  onUploadProgress: (progressEvent: any) => void,
 ) => {
   const data = new FormData();
   data.append("title", "ProfileImage");
@@ -50,19 +47,13 @@ export const _sendPostFileWithCookiesAndCsrf = async (
   });
 };
 
-export const _sendGetNoCookies = async (
-  url: string,
-  params: Dictionary<string>
-) => {
+export const _sendGetNoCookies = async (url: string, params: Dictionary<string>) => {
   return axios.get(composeUrl(url, params), {
     headers: { Accept: "application/json" },
   });
 };
 
-export const _sendGetWithCookiesAndCsrf = async (
-  url: string,
-  params: Dictionary<string>
-) => {
+export const _sendGetWithCookiesAndCsrf = async (url: string, params: Dictionary<string>) => {
   return axios.get(composeUrl(url, params), {
     withCredentials: true,
     headers: {
@@ -77,7 +68,7 @@ export const _handleErrors = (
   e: any,
   url: string,
   onFail: (params: OnFailArgs) => AnyAction,
-  dispatch: Dispatch
+  dispatch: Dispatch,
 ) => {
   if (e.message === "Network Error") {
     dispatch(onFail({ errors: createNetworkError(url), url }));
