@@ -38,6 +38,7 @@
     "@types/jest": "^27.0.1",
     "babel-jest": "^27.1.1",
     "jest": "^27.1.1",
+    "prettier": "2.4.0",
     "redux": "^4.1.1",
     "rimraf": "^3.0.2",
     "rollup": "^2.56.3",

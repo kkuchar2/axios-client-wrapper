@@ -1,72 +1,68 @@
-import {AnyAction} from "@reduxjs/toolkit";
-import {Dispatch} from "redux";
+import { AnyAction } from "@reduxjs/toolkit";
+import { Dispatch } from "redux";
 
-import {OnFailArgs, OnSuccessArgs} from "./clientTypes";
+import { OnFailArgs, OnSuccessArgs } from "./clientTypes";
 
 export interface ResponseParserProps {
-    path: string,
-    dispatch: Dispatch,
-    response: any,
-    onSuccess: (params: OnSuccessArgs) => AnyAction,
-    onFail: (params: OnFailArgs) => AnyAction,
+  path: string;
+  dispatch: Dispatch;
+  response: any;
+  onSuccess: (params: OnSuccessArgs) => AnyAction;
+  onFail: (params: OnFailArgs) => AnyAction;
 }
 
 export const baseResponseParser = (props: ResponseParserProps) => {
+  const { path, dispatch, response, onFail } = props;
 
-    const {path, dispatch, response, onFail} = props;
+  if (!response) {
+    dispatch(onFail("No response"));
+    return [true, null];
+  }
 
-    if (!response) {
-        dispatch(onFail("No response"));
-        return [true, null];
-    }
+  const responseData = response.data;
 
-    const responseData = response.data;
+  if (responseData === undefined) {
+    dispatch(onFail({ errors: { any: ["no_response_data"] }, path }));
+    return [true, null];
+  }
 
-    if (responseData === undefined) {
-        dispatch(onFail({errors: {"any": ["no_response_data"]}, path}));
-        return [true, null];
-    }
-
-    return [false, responseData];
+  return [false, responseData];
 };
 
-export const defaultResponseParser = (props : ResponseParserProps) => {
+export const defaultResponseParser = (props: ResponseParserProps) => {
+  const { path, dispatch, onSuccess } = props;
 
-    const {path, dispatch, onSuccess} = props;
+  const [shouldExit, responseData] = baseResponseParser(props);
 
-    const [shouldExit, responseData] = baseResponseParser(props);
+  if (shouldExit) {
+    return;
+  }
 
-    if (shouldExit) {
-        return;
-    }
-
-    dispatch(onSuccess({errors: [], path, data: responseData}));
+  dispatch(onSuccess({ errors: [], path, data: responseData }));
 };
 
-export const customResponseParser = (props : ResponseParserProps) => {
+export const customResponseParser = (props: ResponseParserProps) => {
+  const { path, dispatch, onSuccess, onFail } = props;
 
-    const {path, dispatch, onSuccess, onFail} = props;
+  const [shouldExit, responseData] = baseResponseParser(props);
 
-    const [shouldExit, responseData] = baseResponseParser(props);
+  if (shouldExit) {
+    return;
+  }
 
-    if (shouldExit) {
-        return;
-    }
+  // Parse status and inner data from my custom API
+  const status = responseData.status;
 
-    // Parse status and inner data from my custom API
-    const status = responseData.status;
+  if (!status) {
+    dispatch(onFail({ path, errors: { any: ["no_response_data"] } }));
+    return;
+  }
 
-    if (!status) {
-        dispatch(onFail({ path, errors: {"any": ["no_response_data"]}}));
-        return;
-    }
+  const message = responseData.data;
 
-    const message = responseData.data;
-
-    if (status === 'success') {
-        dispatch(onSuccess({ path, data: message, errors: []}));
-    }
-    else {
-        dispatch(onFail({errors: message, path}));
-    }
+  if (status === "success") {
+    dispatch(onSuccess({ path, data: message, errors: [] }));
+  } else {
+    dispatch(onFail({ errors: message, path }));
+  }
 };
