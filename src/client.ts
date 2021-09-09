@@ -55,7 +55,7 @@ export const sendGet = (args: GetRequestArgs) => {
             responseParser({
                 path,
                 dispatch,
-                response: await requestFunc(buildApiUrl(apiUrl, path), {}),
+                response: await requestFunc(buildApiUrl(apiUrl, path), params),
                 onSuccess,
                 onFail
             });
