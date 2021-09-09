@@ -46,8 +46,6 @@ export const sendGet = (args: GetRequestArgs) => {
         apiUrl, path, onBefore, onSuccess, onFail, responseParser = defaultResponseParser, withAuthentication, params
     } = args;
 
-    console.log('params: ', params)
-
     return async (dispatch: Dispatch) => {
         try {
             dispatch(onBefore({ path, data: params, errors: []}));

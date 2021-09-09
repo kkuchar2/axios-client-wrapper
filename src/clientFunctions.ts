@@ -46,7 +46,6 @@ export const _sendPostFileWithCookiesAndCsrf = async (url: string, file: File, o
 };
 
 export const _sendGetNoCookies = async (url: string, params: Dictionary<string>) => {
-    console.log('pparams: ', params)
     return axios.get(composeUrl(url, params), {headers: {'Accept': 'application/json'}});
 };
 
