@@ -89,7 +89,9 @@ export const _handleErrors = (
 
 const createNetworkError = (source: string) => {
   return {
-    generic: { type: "network_error", message: "NETWORK_ERROR", source },
+    generic: [
+        { type: "network_error", message: "NETWORK_ERROR", source }
+    ],
   };
 };
 
