@@ -2,6 +2,7 @@ import { AnyAction } from "@reduxjs/toolkit";
 import { Dispatch } from "redux";
 
 import { OnFailArgs, OnSuccessArgs } from "./clientTypes";
+import { dispatchError, dispatchOtherError, dispatchSuccess, ErrorType } from "./clientFunctions";
 
 export interface ResponseParserProps {
   path: string;
@@ -11,18 +12,18 @@ export interface ResponseParserProps {
   onFail: (params: OnFailArgs) => AnyAction;
 }
 
-export const baseResponseParser = (props: ResponseParserProps) => {
+export const applyBaseResponseParse = (props: ResponseParserProps) => {
   const { path, dispatch, response, onFail } = props;
 
   if (!response) {
-    dispatch(onFail("No response"));
+    dispatchError(dispatch, onFail, path, ErrorType.EmptyResponse, "Missing response");
     return [true, null];
   }
 
   const responseData = response.data;
 
-  if (responseData === undefined) {
-    dispatch(onFail({ errors: { any: ["no_response_data"] }, path }));
+  if (responseData) {
+    dispatchError(dispatch, onFail, path, ErrorType.EmptyResponseData, "Missing response data");
     return [true, null];
   }
 
@@ -32,53 +33,30 @@ export const baseResponseParser = (props: ResponseParserProps) => {
 export const defaultResponseParser = (props: ResponseParserProps) => {
   const { path, dispatch, onSuccess } = props;
 
-  const [shouldExit, responseData] = baseResponseParser(props);
+  const [shouldExit, responseData] = applyBaseResponseParse(props);
 
   if (shouldExit) {
     return;
   }
 
-  dispatch(onSuccess({ errors: [], path, data: responseData }));
+  dispatchSuccess(dispatch, onSuccess, path, responseData);
 };
 
 export const customResponseParser = (props: ResponseParserProps) => {
   const { path, dispatch, onSuccess, onFail } = props;
 
-  const [shouldExit, responseData] = baseResponseParser(props);
+  const [shouldExit, responseData] = applyBaseResponseParse(props);
 
   if (shouldExit) {
     return;
   }
 
-  // Parse status and inner data from my custom API
   const status = responseData.status;
-
-  if (!status) {
-    dispatch(
-      onFail({
-        path,
-        errors: [{ any: ["no_response_data"] }],
-      }),
-    );
-    return;
-  }
-
   const message = responseData.data;
 
   if (status === "success") {
-    dispatch(
-      onSuccess({
-        path,
-        data: message,
-        errors: [],
-      }),
-    );
+    dispatchSuccess(dispatch, onSuccess, path, message);
   } else {
-    dispatch(
-      onFail({
-        errors: [message],
-        path,
-      }),
-    );
+    dispatchOtherError(dispatch, onFail, path, message);
   }
 };

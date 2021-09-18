@@ -83,12 +83,7 @@ export const createBaseRequestSlice = <Reducers extends SliceCaseReducers<BaseRe
   });
 };
 
-export const sendPostRequest = (
-  apiUrl: string,
-  path: string,
-  body: object,
-  slice: Slice<BaseRequestSliceState>,
-) => {
+export const sendPostRequest = (apiUrl: string, path: string, body: object, slice: Slice<BaseRequestSliceState>) => {
   return sendPost({
     apiUrl: apiUrl,
     path: path,
@@ -100,11 +95,7 @@ export const sendPostRequest = (
   });
 };
 
-export const sendGetRequest = (
-  apiUrl: string,
-  path: string,
-  slice: Slice<BaseRequestSliceState>,
-) => {
+export const sendGetRequest = (apiUrl: string, path: string, slice: Slice<BaseRequestSliceState>) => {
   return sendGet({
     apiUrl: apiUrl,
     path: path,

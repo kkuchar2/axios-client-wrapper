@@ -9,6 +9,7 @@ import {
   _sendPostFileWithCookiesAndCsrf,
   _sendPostNoCookies,
   _sendPostWithCookiesAndCsrf,
+  dispatchOnBefore,
 } from "./clientFunctions";
 import { defaultResponseParser } from "./responseParsers";
 
@@ -28,7 +29,7 @@ export const sendPost = (args: PostRequestArgs) => {
 
   return async (dispatch: Dispatch) => {
     try {
-      dispatch(onBefore({ path, data: body, errors: [] }));
+      dispatchOnBefore(dispatch, onBefore, path, body);
 
       const requestFunc = withAuthentication ? _sendPostWithCookiesAndCsrf : _sendPostNoCookies;
 
@@ -55,7 +56,7 @@ export const sendGet = (args: GetRequestArgs) => {
 
   return async (dispatch: Dispatch) => {
     try {
-      dispatch(onBefore({ path, data: params, errors: [] }));
+      dispatchOnBefore(dispatch, onBefore, path, params);
 
       const requestFunc = withAuthentication ? _sendGetWithCookiesAndCsrf : _sendGetNoCookies;
 
@@ -87,11 +88,9 @@ export const sendFilePost = (params: FileRequestArgs) => {
 
   return async (dispatch: Dispatch) => {
     try {
-      dispatch(onBefore({ path, data: null, errors: [] }));
+      dispatchOnBefore(dispatch, onBefore, path, null);
 
-      const requestFunc = withAuthentication
-        ? _sendPostFileWithCookiesAndCsrf
-        : _sendPostFileNoCookies;
+      const requestFunc = withAuthentication ? _sendPostFileWithCookiesAndCsrf : _sendPostFileNoCookies;
 
       responseParser({
         path,

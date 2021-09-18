@@ -8,13 +8,20 @@ export interface Dictionary<T> {
 
 export interface OnBeforeArgs {
   path: string;
-  errors: string[];
+  errors: Array<any>;
   data: any;
 }
 
-export interface OnFailArgs {}
+export interface OnFailArgs {
+  path: string;
+  data: any;
+  errors: Array<any>;
+}
 
-export interface OnSuccessArgs {}
+export interface OnSuccessArgs {
+  path: string;
+  data: any;
+}
 
 export interface BaseRequestArgs {
   apiUrl: string;
