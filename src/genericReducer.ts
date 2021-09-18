@@ -14,10 +14,16 @@ export interface IResponsePayload {
   data: any;
 }
 
-export enum RequestState {
-  Idle,
-  Pending,
-  ResponseReceived,
+export enum RequestStatus {
+  Unknown,
+  Waiting,
+  Success,
+  Failure,
+}
+
+export interface RequestState {
+  pending: boolean;
+  status: RequestStatus;
 }
 
 export interface BaseRequestSliceState {
@@ -42,33 +48,33 @@ export const createBaseRequestSlice = <Reducers extends SliceCaseReducers<BaseRe
     name,
     initialState: {
       path: "",
-      requestState: RequestState.Idle,
+      requestState: { pending: false, status: RequestStatus.Unknown },
       responseData: {},
       errors: [],
     } as BaseRequestSliceState,
     reducers: {
       onRequestSent: (state, action: PayloadAction<BeforeRequestPayload>) => {
         const { path = "" } = action.payload ? action.payload : {};
-        state.requestState = RequestState.Pending;
+        state.requestState = { pending: true, status: RequestStatus.Waiting };
         state.path = path;
       },
       onRequestSuccess: (state, action: PayloadAction<IResponsePayload>) => {
         const { errors = [], path = "", data = {} } = action.payload ? action.payload : {};
         state.errors = errors;
         state.path = path;
-        state.requestState = RequestState.ResponseReceived;
+        state.requestState = { pending: false, status: RequestStatus.Success };
         state.responseData = data;
       },
       onRequestFailed: (state: BaseRequestSliceState, action: PayloadAction<IResponsePayload>) => {
         const { errors = [], path = "", data = {} } = action.payload ? action.payload : {};
         state.path = path;
-        state.requestState = RequestState.ResponseReceived;
+        state.requestState = { pending: false, status: RequestStatus.Failure };
         state.responseData = data;
         state.errors = errors;
       },
       onReset: (state: BaseRequestSliceState) => {
         state.path = "";
-        state.requestState = RequestState.Idle;
+        state.requestState = { pending: false, status: RequestStatus.Unknown };
         state.responseData = {};
         state.errors = [];
       },

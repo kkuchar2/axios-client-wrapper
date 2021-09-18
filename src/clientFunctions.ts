@@ -5,6 +5,14 @@ import { Dispatch } from "redux";
 import { Dictionary, OnFailArgs } from "./clientTypes";
 import Cookies from "universal-cookie";
 
+export enum RequestErrorType {
+  NetworkError,
+  EmptyResponse,
+  Unauthorized,
+  ServerError,
+  Unknown,
+}
+
 export const _sendPostNoCookies = async (url: string, body: Dictionary<any>) =>
   axios.post(url, body);
 
@@ -24,7 +32,9 @@ export const _sendPostFileNoCookies = async (url: string, file: File) => {
   data.append("text", "random_text");
   data.append("img", file);
 
-  return axios.post(url, data, { onUploadProgress: () => {} });
+  return axios.post(url, data, {
+    onUploadProgress: () => {},
+  });
 };
 
 export const _sendPostFileWithCookiesAndCsrf = async (
@@ -64,6 +74,23 @@ export const _sendGetWithCookiesAndCsrf = async (url: string, params: Dictionary
   });
 };
 
+export const dispatchError = (
+  dispatch: Dispatch,
+  onFail: (params: OnFailArgs) => AnyAction,
+  url: string,
+  errorType: RequestErrorType,
+  message: string,
+) => {
+  dispatch(
+    onFail({
+      errors: {
+        request: [{ type: errorType, message: message, url }],
+      },
+      url,
+    }),
+  );
+};
+
 export const _handleErrors = (
   e: any,
   url: string,
@@ -71,28 +98,22 @@ export const _handleErrors = (
   dispatch: Dispatch,
 ) => {
   if (e.message === "Network Error") {
-    dispatch(onFail({ errors: createNetworkError(url), url }));
-    return true;
+    dispatchError(dispatch, onFail, url, RequestErrorType.NetworkError, "Network Error");
+    return;
   }
 
   if (!e.response) {
-    dispatch(onFail({ errors: { any: ["unknown_error"] }, url }));
-    return true;
+    dispatchError(dispatch, onFail, url, RequestErrorType.EmptyResponse, "The response is empty");
+    return;
   }
 
   if (e.response.status === 401) {
-    dispatch(onFail({ errors: { any: ["unauthorized"] }, url }));
+    dispatchError(dispatch, onFail, url, RequestErrorType.Unauthorized, "Unauthorized");
+  } else if (e.response.status === 500) {
+    dispatchError(dispatch, onFail, url, RequestErrorType.ServerError, "Server error");
   } else {
-    dispatch(onFail({ any: ["unknown_error"] }));
+    dispatchError(dispatch, onFail, url, RequestErrorType.Unknown, e.response);
   }
-};
-
-const createNetworkError = (source: string) => {
-  return {
-    generic: [
-        { type: "network_error", message: "NETWORK_ERROR", source }
-    ],
-  };
 };
 
 export const composeUrl = (url: string, params: Dictionary<string>) => {

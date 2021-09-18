@@ -54,27 +54,31 @@ export const customResponseParser = (props: ResponseParserProps) => {
   const status = responseData.status;
 
   if (!status) {
-    dispatch(onFail({
-          path,
-          errors: [
-            { any: ["no_response_data"] }
-          ]
-    }));
+    dispatch(
+      onFail({
+        path,
+        errors: [{ any: ["no_response_data"] }],
+      }),
+    );
     return;
   }
 
   const message = responseData.data;
 
   if (status === "success") {
-    dispatch(onSuccess({
-      path,
-      data: message,
-      errors: []
-    }));
+    dispatch(
+      onSuccess({
+        path,
+        data: message,
+        errors: [],
+      }),
+    );
   } else {
-    dispatch(onFail({
-      errors: [message],
-      path
-    }));
+    dispatch(
+      onFail({
+        errors: [message],
+        path,
+      }),
+    );
   }
 };

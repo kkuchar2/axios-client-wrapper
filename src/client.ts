@@ -36,11 +36,7 @@ export const sendPost = (args: PostRequestArgs) => {
 
       responseParser({ path, dispatch, response, onSuccess, onFail });
     } catch (e) {
-      const shouldExit = _handleErrors(e, path, onFail, dispatch);
-
-      if (shouldExit) {
-        return;
-      }
+      _handleErrors(e, path, onFail, dispatch);
     }
   };
 };
@@ -71,11 +67,7 @@ export const sendGet = (args: GetRequestArgs) => {
         onFail,
       });
     } catch (e) {
-      const shouldExit = _handleErrors(e, path, onFail, dispatch);
-
-      if (shouldExit) {
-        return;
-      }
+      _handleErrors(e, path, onFail, dispatch);
     }
   };
 };
@@ -109,11 +101,7 @@ export const sendFilePost = (params: FileRequestArgs) => {
         onFail,
       });
     } catch (e) {
-      const shouldExit = _handleErrors(e, path, onFail, dispatch);
-
-      if (shouldExit) {
-        return;
-      }
+      _handleErrors(e, path, onFail, dispatch);
     }
   };
 };
