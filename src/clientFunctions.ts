@@ -42,12 +42,9 @@ export const _sendPostFileWithCookiesAndCsrf = async (
   file: File,
   onUploadProgress: (progressEvent: any) => void,
 ) => {
-  const data = new FormData();
-  data.append("title", "ProfileImage");
-  data.append("text", "random_text");
-  data.append("img", file);
+  const formData = _createFormDataFromFile(file, "img");
 
-  return axios.post(url, data, {
+  return axios.post(url, formData, {
     withCredentials: true,
     headers: {
       "X-Requested-With": "XMLHttpRequest",
@@ -115,6 +112,12 @@ export const _handleErrors = (
     dispatchError(dispatch, onFail, url, RequestErrorType.Unknown, e.response);
   }
 };
+
+const _createFormDataFromFile = (file: File, propertyName: string) => {
+  const formData = new FormData();
+  formData.append(propertyName, file);
+  return formData;
+}
 
 export const composeUrl = (url: string, params: Dictionary<string>) => {
   let parametrizedUrl = url;
