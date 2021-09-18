@@ -22,7 +22,7 @@ export const applyBaseResponseParse = (props: ResponseParserProps) => {
 
   const responseData = response.data;
 
-  if (responseData) {
+  if (!responseData) {
     dispatchError(dispatch, onFail, path, ErrorType.EmptyResponseData, "Missing response data");
     return [true, null];
   }
