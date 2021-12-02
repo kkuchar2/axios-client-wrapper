@@ -95,16 +95,14 @@ export const sendPostRequest = (apiUrl: string, path: string, body: object, slic
   });
 };
 
-export const sendGetRequest = (apiUrl: string, path: string, slice: Slice<BaseRequestSliceState>) => {
+export const sendGetRequest = (apiUrl: string, path: string, params: Dictionary<string>, withAuthentication: boolean, slice: Slice<BaseRequestSliceState>) => {
   return sendGet({
     apiUrl: apiUrl,
     path: path,
     onBefore: slice.actions.onRequestSent,
     onSuccess: slice.actions.onRequestSuccess,
     onFail: slice.actions.onRequestFailed,
-    params: {
-      q: "j%20k%20rowling",
-    },
+    params: params,
     withAuthentication: false,
   });
 };
