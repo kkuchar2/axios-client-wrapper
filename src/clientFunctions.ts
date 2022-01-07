@@ -50,10 +50,7 @@ export const _sendGetNoCookies = async (url: string, params: Dictionary<string>)
 };
 
 export const _sendGetWithCookiesAndCsrf = async (url: string, params: Dictionary<string>) => {
-  return axios.get(composeUrl(url, params), {
-    withCredentials: true,
-    headers: _getAuthenticationHeaders(),
-  });
+  return axios.get(composeUrl(url, params), { withCredentials: true, headers: _getAuthenticationHeaders() });
 };
 
 export const dispatchError = (

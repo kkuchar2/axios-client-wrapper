@@ -6,7 +6,7 @@ import {
   SliceCaseReducers,
   ValidateSliceCaseReducers,
 } from "@reduxjs/toolkit";
-import { sendFilePost, sendGet, sendPost } from "./client";
+import {sendFilePost, sendGet, sendPost} from "./client";
 
 export interface IResponsePayload {
   path: string;
@@ -38,9 +38,9 @@ export interface BeforeRequestPayload {
 }
 
 export const createBaseRequestSlice = <Reducers extends SliceCaseReducers<BaseRequestSliceState>>({
-  name = "",
-  reducers,
-}: {
+                                                                                                    name = "",
+                                                                                                    reducers,
+                                                                                                  }: {
   name: string;
   reducers?: ValidateSliceCaseReducers<BaseRequestSliceState, Reducers>;
 }) => {
@@ -48,33 +48,33 @@ export const createBaseRequestSlice = <Reducers extends SliceCaseReducers<BaseRe
     name,
     initialState: {
       path: "",
-      requestState: { pending: false, status: RequestStatus.Unknown },
+      requestState: {pending: false, status: RequestStatus.Unknown},
       responseData: {},
       errors: [],
     } as BaseRequestSliceState,
     reducers: {
       onRequestSent: (state, action: PayloadAction<BeforeRequestPayload>) => {
-        const { path = "" } = action.payload ? action.payload : {};
-        state.requestState = { pending: true, status: RequestStatus.Waiting };
+        const {path = ""} = action.payload ? action.payload : {};
+        state.requestState = {pending: true, status: RequestStatus.Waiting};
         state.path = path;
       },
       onRequestSuccess: (state, action: PayloadAction<IResponsePayload>) => {
-        const { errors = [], path = "", data = {} } = action.payload ? action.payload : {};
+        const {errors = [], path = "", data = {}} = action.payload ? action.payload : {};
         state.errors = errors;
         state.path = path;
-        state.requestState = { pending: false, status: RequestStatus.Success };
+        state.requestState = {pending: false, status: RequestStatus.Success};
         state.responseData = data;
       },
       onRequestFailed: (state: BaseRequestSliceState, action: PayloadAction<IResponsePayload>) => {
-        const { errors = [], path = "", data = {} } = action.payload ? action.payload : {};
+        const {errors = [], path = "", data = {}} = action.payload ? action.payload : {};
         state.path = path;
-        state.requestState = { pending: false, status: RequestStatus.Failure };
+        state.requestState = {pending: false, status: RequestStatus.Failure};
         state.responseData = data;
         state.errors = errors;
       },
       onReset: (state: BaseRequestSliceState) => {
         state.path = "";
-        state.requestState = { pending: false, status: RequestStatus.Unknown };
+        state.requestState = {pending: false, status: RequestStatus.Unknown};
         state.responseData = {};
         state.errors = [];
       },
@@ -108,11 +108,12 @@ export const sendGetRequest = (apiUrl: string, path: string, params: Dictionary<
 };
 
 export const sendFilePostRequest = (
-  apiUrl: string,
-  path: string,
-  file: File,
-  onUploadProgress: (progressEvent: any) => void = (evt) => {},
-  slice: Slice<BaseRequestSliceState>,
+    apiUrl: string,
+    path: string,
+    file: File,
+    onUploadProgress: (progressEvent: any) => void = (evt) => {
+    },
+    slice: Slice<BaseRequestSliceState>,
 ) => {
   return sendFilePost({
     apiUrl: apiUrl,
