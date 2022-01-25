@@ -54,13 +54,13 @@ export const _sendGetWithCookiesAndCsrf = async (url: string, params: Object) =>
 };
 
 export const _sendPutNoCookies = async (url: string, data: Object) => {
-  return axios.put(composeUrl(url, data), {
+  return axios.put(url, data, {
     headers: _getNormalHeaders(),
   });
 };
 
 export const _sendPutWithCookiesAndCsrf = async (url: string, data: Object) => {
-  return axios.put(composeUrl(url, data), { withCredentials: true, headers: _getAuthenticationHeaders() });
+  return axios.put(url, data, { withCredentials: true, headers: _getAuthenticationHeaders() });
 };
 
 
