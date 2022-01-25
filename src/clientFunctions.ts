@@ -63,6 +63,16 @@ export const _sendPutWithCookiesAndCsrf = async (url: string, data: Object) => {
   return axios.put(url, data, { withCredentials: true, headers: _getAuthenticationHeaders() });
 };
 
+export const _sendDeleteNoCookies = async (url: string, data: Object) => {
+  return axios.delete(url, {
+    data: data,
+    headers: _getNormalHeaders(),
+  });
+};
+
+export const _sendDeleteWithCookiesAndCsrf = async (url: string, data: Object) => {
+  return axios.delete(url, { data: data, withCredentials: true, headers: _getAuthenticationHeaders() });
+};
 
 export const dispatchError = (
   dispatch: Dispatch,

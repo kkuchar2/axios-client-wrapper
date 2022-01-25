@@ -1,6 +1,6 @@
-import { Dispatch } from "redux";
+import {Dispatch} from "redux";
 
-import { FileRequestArgs, GetRequestArgs, PostRequestArgs, PutRequestArgs } from "./clientTypes";
+import {FileRequestArgs, GetRequestArgs, PostRequestArgs, PutRequestArgs} from "./clientTypes";
 import {
   _handleErrors,
   _sendGetNoCookies,
@@ -9,10 +9,13 @@ import {
   _sendPostFileWithCookiesAndCsrf,
   _sendPostNoCookies,
   _sendPostWithCookiesAndCsrf,
+  _sendPutNoCookies,
+  _sendPutWithCookiesAndCsrf,
+  _sendDeleteNoCookies,
+  _sendDeleteWithCookiesAndCsrf,
   dispatchOnBefore,
-  _sendPutNoCookies, _sendPutWithCookiesAndCsrf,
 } from "./clientFunctions";
-import { defaultResponseParser } from "./responseParsers";
+import {defaultResponseParser} from "./responseParsers";
 
 const buildApiUrl = (apiUrl: string, path: string) => apiUrl + path;
 
@@ -36,7 +39,7 @@ export const sendPost = (args: PostRequestArgs) => {
 
       const response = await requestFunc(buildApiUrl(apiUrl, path), body);
 
-      responseParser({ path, dispatch, response, onSuccess, onFail });
+      responseParser({path, dispatch, response, onSuccess, onFail});
     } catch (e) {
       _handleErrors(e, path, onFail, dispatch);
     }
@@ -91,6 +94,37 @@ export const sendPut = (args: PutRequestArgs) => {
       dispatchOnBefore(dispatch, onBefore, path, data);
 
       const requestFunc = withAuthentication ? _sendPutWithCookiesAndCsrf : _sendPutNoCookies;
+
+      responseParser({
+        path,
+        dispatch,
+        response: await requestFunc(buildApiUrl(apiUrl, path), data),
+        onSuccess,
+        onFail,
+      });
+    } catch (e) {
+      _handleErrors(e, path, onFail, dispatch);
+    }
+  };
+};
+
+export const sendDelete = (args: PutRequestArgs) => {
+  const {
+    apiUrl,
+    path,
+    onBefore,
+    onSuccess,
+    onFail,
+    responseParser = defaultResponseParser,
+    withAuthentication,
+    data,
+  } = args;
+
+  return async (dispatch: Dispatch) => {
+    try {
+      dispatchOnBefore(dispatch, onBefore, path, data);
+
+      const requestFunc = withAuthentication ? _sendDeleteWithCookiesAndCsrf : _sendDeleteNoCookies;
 
       responseParser({
         path,
