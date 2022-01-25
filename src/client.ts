@@ -1,6 +1,6 @@
 import { Dispatch } from "redux";
 
-import { FileRequestArgs, GetRequestArgs, PostRequestArgs } from "./clientTypes";
+import { FileRequestArgs, GetRequestArgs, PostRequestArgs, PutRequestArgs } from "./clientTypes";
 import {
   _handleErrors,
   _sendGetNoCookies,
@@ -10,6 +10,7 @@ import {
   _sendPostNoCookies,
   _sendPostWithCookiesAndCsrf,
   dispatchOnBefore,
+  _sendPutNoCookies, _sendPutWithCookiesAndCsrf,
 } from "./clientFunctions";
 import { defaultResponseParser } from "./responseParsers";
 
@@ -64,6 +65,37 @@ export const sendGet = (args: GetRequestArgs) => {
         path,
         dispatch,
         response: await requestFunc(buildApiUrl(apiUrl, path), params),
+        onSuccess,
+        onFail,
+      });
+    } catch (e) {
+      _handleErrors(e, path, onFail, dispatch);
+    }
+  };
+};
+
+export const sendPut = (args: PutRequestArgs) => {
+  const {
+    apiUrl,
+    path,
+    onBefore,
+    onSuccess,
+    onFail,
+    responseParser = defaultResponseParser,
+    withAuthentication,
+    data,
+  } = args;
+
+  return async (dispatch: Dispatch) => {
+    try {
+      dispatchOnBefore(dispatch, onBefore, path, data);
+
+      const requestFunc = withAuthentication ? _sendPutWithCookiesAndCsrf : _sendPutNoCookies;
+
+      responseParser({
+        path,
+        dispatch,
+        response: await requestFunc(buildApiUrl(apiUrl, path), data),
         onSuccess,
         onFail,
       });

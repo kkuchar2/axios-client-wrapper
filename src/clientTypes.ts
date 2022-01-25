@@ -41,6 +41,10 @@ export interface GetRequestArgs extends BaseRequestArgs {
   params?: Dictionary<string>;
 }
 
+export interface PutRequestArgs extends BaseRequestArgs {
+  data?: Dictionary<string>;
+}
+
 export interface FileRequestArgs extends BaseRequestArgs {
   file: File;
   onUploadProgress: (progressEvent: any) => void;

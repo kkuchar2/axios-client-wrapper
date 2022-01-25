@@ -53,6 +53,17 @@ export const _sendGetWithCookiesAndCsrf = async (url: string, params: Dictionary
   return axios.get(composeUrl(url, params), { withCredentials: true, headers: _getAuthenticationHeaders() });
 };
 
+export const _sendPutNoCookies = async (url: string, data: Dictionary<string>) => {
+  return axios.put(composeUrl(url, data), {
+    headers: _getNormalHeaders(),
+  });
+};
+
+export const _sendPutWithCookiesAndCsrf = async (url: string, data: Dictionary<string>) => {
+  return axios.put(composeUrl(url, data), { withCredentials: true, headers: _getAuthenticationHeaders() });
+};
+
+
 export const dispatchError = (
   dispatch: Dispatch,
   onFail: (params: OnFailArgs) => AnyAction,
