@@ -2,7 +2,7 @@ import { AnyAction } from "@reduxjs/toolkit";
 import axios from "axios";
 import { Dispatch } from "redux";
 
-import { Dictionary, OnBeforeArgs, OnFailArgs, OnSuccessArgs } from "./clientTypes";
+import { OnBeforeArgs, OnFailArgs, OnSuccessArgs } from "./clientTypes";
 import Cookies from "universal-cookie";
 
 export enum ErrorType {
@@ -14,9 +14,9 @@ export enum ErrorType {
   Unknown,
 }
 
-export const _sendPostNoCookies = async (url: string, body: Dictionary<any>) => axios.post(url, body);
+export const _sendPostNoCookies = async (url: string, body: Object) => axios.post(url, body);
 
-export const _sendPostWithCookiesAndCsrf = async (url: string, body: Dictionary<any>) => {
+export const _sendPostWithCookiesAndCsrf = async (url: string, body: Object) => {
   return axios.post(url, body, { withCredentials: true, headers: _getAuthenticationHeaders() });
 };
 
@@ -43,23 +43,23 @@ export const _sendPostFileWithCookiesAndCsrf = async (
   });
 };
 
-export const _sendGetNoCookies = async (url: string, params: Dictionary<string>) => {
+export const _sendGetNoCookies = async (url: string, params: Object) => {
   return axios.get(composeUrl(url, params), {
     headers: _getNormalHeaders(),
   });
 };
 
-export const _sendGetWithCookiesAndCsrf = async (url: string, params: Dictionary<string>) => {
+export const _sendGetWithCookiesAndCsrf = async (url: string, params: Object) => {
   return axios.get(composeUrl(url, params), { withCredentials: true, headers: _getAuthenticationHeaders() });
 };
 
-export const _sendPutNoCookies = async (url: string, data: Dictionary<string>) => {
+export const _sendPutNoCookies = async (url: string, data: Object) => {
   return axios.put(composeUrl(url, data), {
     headers: _getNormalHeaders(),
   });
 };
 
-export const _sendPutWithCookiesAndCsrf = async (url: string, data: Dictionary<string>) => {
+export const _sendPutWithCookiesAndCsrf = async (url: string, data: Object) => {
   return axios.put(composeUrl(url, data), { withCredentials: true, headers: _getAuthenticationHeaders() });
 };
 
@@ -131,7 +131,7 @@ const _createFormDataFromFile = (file: File, propertyName: string) => {
   return formData;
 };
 
-export const composeUrl = (url: string, params: Dictionary<string>) => {
+export const composeUrl = (url: string, params: Object) => {
   let parametrizedUrl = url;
 
   for (const [key, value] of Object.entries(params)) {

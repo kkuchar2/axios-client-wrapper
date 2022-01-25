@@ -29,7 +29,7 @@ export interface RequestState {
 export interface BaseRequestSliceState {
   path: string;
   requestState: RequestState;
-  responseData: Dictionary<any>;
+  responseData: Object;
   errors: Array<string>;
 }
 
@@ -95,7 +95,7 @@ export const sendPostRequest = (apiUrl: string, path: string, body: object, slic
   });
 };
 
-export const sendGetRequest = (apiUrl: string, path: string, params: Dictionary<string>, withAuthentication: boolean, slice: Slice<BaseRequestSliceState>) => {
+export const sendGetRequest = (apiUrl: string, path: string, params: Object, withAuthentication: boolean, slice: Slice<BaseRequestSliceState>) => {
   return sendGet({
     apiUrl: apiUrl,
     path: path,

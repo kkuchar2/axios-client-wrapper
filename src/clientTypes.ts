@@ -2,10 +2,6 @@ import { AnyAction } from "@reduxjs/toolkit";
 
 import { ResponseParserProps } from "./responseParsers";
 
-export interface Dictionary<T> {
-  [Key: string]: T;
-}
-
 export interface OnBeforeArgs {
   path: string;
   errors: Array<any>;
@@ -34,15 +30,15 @@ export interface BaseRequestArgs {
 }
 
 export interface PostRequestArgs extends BaseRequestArgs {
-  body?: Dictionary<any>;
+  body?: Object;
 }
 
 export interface GetRequestArgs extends BaseRequestArgs {
-  params?: Dictionary<string>;
+  params?: Object;
 }
 
 export interface PutRequestArgs extends BaseRequestArgs {
-  data?: Dictionary<string>;
+  data?: Object;
 }
 
 export interface FileRequestArgs extends BaseRequestArgs {
