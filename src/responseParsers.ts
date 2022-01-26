@@ -28,7 +28,7 @@ export const applyBaseResponseParse = (props: ResponseParserProps) => {
     return [true, null];
   }
 
-  return [false, responseData];
+  return [false, responseDataInner];
 };
 
 export const defaultResponseParser = (props: ResponseParserProps) => {
