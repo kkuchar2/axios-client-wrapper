@@ -7,22 +7,23 @@ import { dispatchError, dispatchOtherError, dispatchSuccess, ErrorType } from ".
 export interface ResponseParserProps {
   path: string;
   dispatch: Dispatch;
-  response: any;
+  responseData: any;
+  requestData: Object,
   onSuccess: (params: OnSuccessArgs) => AnyAction;
   onFail: (params: OnFailArgs) => AnyAction;
 }
 
 export const applyBaseResponseParse = (props: ResponseParserProps) => {
-  const { path, dispatch, response, onFail } = props;
+  const { path, dispatch, responseData, requestData, onFail } = props;
 
-  if (!response) {
+  if (!responseData) {
     dispatchError(dispatch, onFail, path, ErrorType.EmptyResponse, "Missing response");
     return [true, null];
   }
 
-  const responseData = response.data;
+  const responseDataInner = responseData.data;
 
-  if (!responseData) {
+  if (!responseDataInner) {
     dispatchError(dispatch, onFail, path, ErrorType.EmptyResponseData, "Missing response data");
     return [true, null];
   }
@@ -31,7 +32,7 @@ export const applyBaseResponseParse = (props: ResponseParserProps) => {
 };
 
 export const defaultResponseParser = (props: ResponseParserProps) => {
-  const { path, dispatch, onSuccess } = props;
+  const { path, dispatch, requestData, onSuccess } = props;
 
   const [shouldExit, responseData] = applyBaseResponseParse(props);
 
@@ -39,11 +40,11 @@ export const defaultResponseParser = (props: ResponseParserProps) => {
     return;
   }
 
-  dispatchSuccess(dispatch, onSuccess, path, responseData);
+  dispatchSuccess(dispatch, onSuccess, path, responseData, requestData);
 };
 
 export const customResponseParser = (props: ResponseParserProps) => {
-  const { path, dispatch, onSuccess, onFail } = props;
+  const { path, dispatch, onSuccess, onFail, requestData } = props;
 
   const [shouldExit, responseData] = applyBaseResponseParse(props);
 
@@ -55,8 +56,8 @@ export const customResponseParser = (props: ResponseParserProps) => {
   const message = responseData.data;
 
   if (status === "success") {
-    dispatchSuccess(dispatch, onSuccess, path, message);
+    dispatchSuccess(dispatch, onSuccess, path, message, requestData);
   } else {
-    dispatchOtherError(dispatch, onFail, path, message);
+    dispatchOtherError(dispatch, onFail, path, message, requestData);
   }
 };

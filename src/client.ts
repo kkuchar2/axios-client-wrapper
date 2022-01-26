@@ -1,6 +1,6 @@
 import {Dispatch} from "redux";
 
-import {FileRequestArgs, GetRequestArgs, PostRequestArgs, PutRequestArgs} from "./clientTypes";
+import {DeleteRequestArgs, FileRequestArgs, GetRequestArgs, PostRequestArgs, PutRequestArgs} from "./clientTypes";
 import {
   _handleErrors,
   _sendGetNoCookies,
@@ -37,9 +37,9 @@ export const sendPost = (args: PostRequestArgs) => {
 
       const requestFunc = withAuthentication ? _sendPostWithCookiesAndCsrf : _sendPostNoCookies;
 
-      const response = await requestFunc(buildApiUrl(apiUrl, path), body);
+      const responseData = await requestFunc(buildApiUrl(apiUrl, path), body);
 
-      responseParser({path, dispatch, response, onSuccess, onFail});
+      responseParser({path, dispatch, responseData, requestData: body, onSuccess, onFail});
     } catch (e) {
       _handleErrors(e, path, onFail, dispatch);
     }
@@ -67,7 +67,8 @@ export const sendGet = (args: GetRequestArgs) => {
       responseParser({
         path,
         dispatch,
-        response: await requestFunc(buildApiUrl(apiUrl, path), params),
+        responseData: await requestFunc(buildApiUrl(apiUrl, path), params),
+        requestData: params,
         onSuccess,
         onFail,
       });
@@ -86,19 +87,20 @@ export const sendPut = (args: PutRequestArgs) => {
     onFail,
     responseParser = defaultResponseParser,
     withAuthentication,
-    data,
+    requestData,
   } = args;
 
   return async (dispatch: Dispatch) => {
     try {
-      dispatchOnBefore(dispatch, onBefore, path, data);
+      dispatchOnBefore(dispatch, onBefore, path, requestData);
 
       const requestFunc = withAuthentication ? _sendPutWithCookiesAndCsrf : _sendPutNoCookies;
 
       responseParser({
         path,
         dispatch,
-        response: await requestFunc(buildApiUrl(apiUrl, path), data),
+        responseData: await requestFunc(buildApiUrl(apiUrl, path), requestData),
+        requestData: requestData,
         onSuccess,
         onFail,
       });
@@ -108,7 +110,7 @@ export const sendPut = (args: PutRequestArgs) => {
   };
 };
 
-export const sendDelete = (args: PutRequestArgs) => {
+export const sendDelete = (args: DeleteRequestArgs) => {
   const {
     apiUrl,
     path,
@@ -117,19 +119,20 @@ export const sendDelete = (args: PutRequestArgs) => {
     onFail,
     responseParser = defaultResponseParser,
     withAuthentication,
-    data,
+    requestData,
   } = args;
 
   return async (dispatch: Dispatch) => {
     try {
-      dispatchOnBefore(dispatch, onBefore, path, data);
+      dispatchOnBefore(dispatch, onBefore, path, requestData);
 
       const requestFunc = withAuthentication ? _sendDeleteWithCookiesAndCsrf : _sendDeleteNoCookies;
 
       responseParser({
         path,
         dispatch,
-        response: await requestFunc(buildApiUrl(apiUrl, path), data),
+        responseData: await requestFunc(buildApiUrl(apiUrl, path), requestData),
+        requestData,
         onSuccess,
         onFail,
       });
@@ -161,7 +164,8 @@ export const sendFilePost = (params: FileRequestArgs) => {
       responseParser({
         path,
         dispatch,
-        response: await requestFunc(buildApiUrl(apiUrl, path), file, onUploadProgress),
+        responseData: await requestFunc(buildApiUrl(apiUrl, path), file, onUploadProgress),
+        requestData: {},
         onSuccess,
         onFail,
       });

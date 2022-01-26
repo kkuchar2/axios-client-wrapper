@@ -99,14 +99,16 @@ export const dispatchOtherError = (
   onFail: (params: OnFailArgs) => AnyAction,
   url: string,
   errorData: string,
+  requestData: Object,
 ) => dispatch(onFail({ path: url, data: [], errors: [errorData] }));
 
 export const dispatchSuccess = (
   dispatch: Dispatch,
   onSuccess: (params: OnSuccessArgs) => AnyAction,
   url: string,
-  data: string,
-) => dispatch(onSuccess({ path: url, data: data }));
+  responseData: string,
+  requestData: Object
+) => dispatch(onSuccess({ path: url, data: responseData, requestData: requestData }));
 
 export const dispatchOnBefore = (
   dispatch: Dispatch,

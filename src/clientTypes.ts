@@ -17,6 +17,7 @@ export interface OnFailArgs {
 export interface OnSuccessArgs {
   path: string;
   data: any;
+  requestData: any
 }
 
 export interface BaseRequestArgs {
@@ -38,8 +39,13 @@ export interface GetRequestArgs extends BaseRequestArgs {
 }
 
 export interface PutRequestArgs extends BaseRequestArgs {
-  data?: Object;
+  requestData?: Object;
 }
+
+export interface DeleteRequestArgs extends BaseRequestArgs {
+  requestData?: Object;
+}
+
 
 export interface FileRequestArgs extends BaseRequestArgs {
   file: File;
