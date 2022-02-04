@@ -1,4 +1,4 @@
-export { sendPost, sendGet, sendPut, sendDelete, sendFilePost } from "./client";
+export * from "./requests";
 export * from "./genericReducer";
-export * from "./clientTypes";
+export * from "./client/client.types";
 export * from "./responseParsers";

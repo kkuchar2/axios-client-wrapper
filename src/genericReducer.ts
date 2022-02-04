@@ -1,81 +1,33 @@
-import {
-  createSlice,
-  Dictionary,
-  PayloadAction,
-  Slice,
-  SliceCaseReducers,
-  ValidateSliceCaseReducers,
-} from "@reduxjs/toolkit";
-import {sendFilePost, sendGet, sendPost} from "./client";
+import {createSlice, PayloadAction, Slice, SliceCaseReducers, ValidateSliceCaseReducers} from "@reduxjs/toolkit";
+import {get, post, postFile} from "./requests";
+import {BaseFileRequestArgs, BaseRequestArgs, ResponseArgs, RequestStatus} from "./client/client.types";
 
-export interface IResponsePayload {
-  path: string;
-  errors: any;
-  data: any;
-}
-
-export enum RequestStatus {
-  Unknown,
-  Waiting,
-  Success,
-  Failure,
-}
-
-export interface RequestState {
-  pending: boolean;
-  status: RequestStatus;
-}
-
-export interface BaseRequestSliceState {
-  path: string;
-  requestState: RequestState;
-  responseData: Object;
-  errors: Array<string>;
-}
-
-export interface BeforeRequestPayload {
-  path: string;
-}
-
-export const createBaseRequestSlice = <Reducers extends SliceCaseReducers<BaseRequestSliceState>>({
-                                                                                                    name = "",
-                                                                                                    reducers,
-                                                                                                  }: {
+export const createBaseRequestSlice = <Reducers extends SliceCaseReducers<ResponseArgs>>({name = "", reducers}: {
   name: string;
-  reducers?: ValidateSliceCaseReducers<BaseRequestSliceState, Reducers>;
+  reducers?: ValidateSliceCaseReducers<ResponseArgs, Reducers>;
 }) => {
   return createSlice({
-    name,
+    name: name,
     initialState: {
       path: "",
-      requestState: {pending: false, status: RequestStatus.Unknown},
-      responseData: {},
+      status: RequestStatus.Unknown,
+      requestData: {},
+      responseData: null,
       errors: [],
-    } as BaseRequestSliceState,
+    } as ResponseArgs,
     reducers: {
-      onRequestSent: (state, action: PayloadAction<BeforeRequestPayload>) => {
-        const {path = ""} = action.payload ? action.payload : {};
-        state.requestState = {pending: true, status: RequestStatus.Waiting};
-        state.path = path;
+      reducer: (state: ResponseArgs, action: PayloadAction<ResponseArgs>) => {
+        state.path = action.payload.path;
+        state.responseData = action.payload.responseData;
+        state.status = action.payload.status;
+        state.requestData = action.payload.requestData;
+        state.responseData = action.payload.responseData;
       },
-      onRequestSuccess: (state, action: PayloadAction<IResponsePayload>) => {
-        const {errors = [], path = "", data = {}} = action.payload ? action.payload : {};
-        state.errors = errors;
-        state.path = path;
-        state.requestState = {pending: false, status: RequestStatus.Success};
-        state.responseData = data;
-      },
-      onRequestFailed: (state: BaseRequestSliceState, action: PayloadAction<IResponsePayload>) => {
-        const {errors = [], path = "", data = {}} = action.payload ? action.payload : {};
-        state.path = path;
-        state.requestState = {pending: false, status: RequestStatus.Failure};
-        state.responseData = data;
-        state.errors = errors;
-      },
-      onReset: (state: BaseRequestSliceState) => {
+      onReset: (state: ResponseArgs) => {
         state.path = "";
-        state.requestState = {pending: false, status: RequestStatus.Unknown};
-        state.responseData = {};
+        state.status = RequestStatus.Unknown;
+        state.requestData = {};
+        state.responseData = null;
         state.errors = [];
       },
       ...reducers,
@@ -83,46 +35,16 @@ export const createBaseRequestSlice = <Reducers extends SliceCaseReducers<BaseRe
   });
 };
 
-export const sendPostRequest = (apiUrl: string, path: string, body: object, slice: Slice<BaseRequestSliceState>) => {
-  return sendPost({
-    apiUrl: apiUrl,
-    path: path,
-    onBefore: slice.actions.onRequestSent,
-    onSuccess: slice.actions.onRequestSuccess,
-    onFail: slice.actions.onRequestFailed,
-    body: body,
-    withAuthentication: false,
-  });
+export const sendPostRequest = (args: BaseRequestArgs, slice: Slice<ResponseArgs>) => {
+  return post({reducer: slice.actions.reducer, ...args});
 };
 
-export const sendGetRequest = (apiUrl: string, path: string, params: Object, withAuthentication: boolean, slice: Slice<BaseRequestSliceState>) => {
-  return sendGet({
-    apiUrl: apiUrl,
-    path: path,
-    onBefore: slice.actions.onRequestSent,
-    onSuccess: slice.actions.onRequestSuccess,
-    onFail: slice.actions.onRequestFailed,
-    params: params,
-    withAuthentication: false,
-  });
+export const sendGetRequest = (args: BaseRequestArgs, slice: Slice<ResponseArgs>) => {
+  return get({reducer: slice.actions.reducer, ...args});
 };
 
-export const sendFilePostRequest = (
-    apiUrl: string,
-    path: string,
-    file: File,
-    onUploadProgress: (progressEvent: any) => void = (evt) => {
-    },
-    slice: Slice<BaseRequestSliceState>,
-) => {
-  return sendFilePost({
-    apiUrl: apiUrl,
-    path: path,
-    onBefore: slice.actions.onRequestSent,
-    onSuccess: slice.actions.onRequestSuccess,
-    onFail: slice.actions.onRequestFailed,
-    file: file,
-    onUploadProgress: onUploadProgress,
-    withAuthentication: false,
-  });
+export const sendFilePostRequest = (requestArgs: BaseRequestArgs,
+                                    fileRequestArgs: BaseFileRequestArgs,
+                                    slice: Slice<ResponseArgs>) => {
+  return postFile({reducer: slice.actions.reducer, ...requestArgs, ...fileRequestArgs});
 };

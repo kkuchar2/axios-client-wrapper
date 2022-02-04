@@ -2,7 +2,17 @@
 
 [![npm version](https://badge.fury.io/js/axios-client-wrapper.svg)](https://www.npmjs.com/package/axios-client-wrapper)
 
-React wrapper around [axios](https://axios-http.com/).
+React wrapper around [axios](https://axios-http.com/) to use with createSlice from "@reduxjs/toolkit"
+
+It will dispatch actions just before request is made (Pending state)
+and after request was complete (Success or Failure state)
+
+Dispatched actions will contain information about:
+  - path to which request was made
+  - status of request
+  - request data that was being sent
+  - response data that was received (if any)
+  - additional errors encountered along the way
 
 ## Install
 
@@ -16,111 +26,67 @@ npm i axios-client-wrapper
 yarn add axios-client-wrapper
 ```
 
-## Usage
+## Example usage with simple slice just for one request
 
-POST request:
 ```js
-import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {API_URL, AppDispatch, RootState} from "appRedux/store";
-import {customResponseParser, RequestState, RequestStatus, sendFilePost} from "axios-client-wrapper";
+const simpleSlice = createBaseRequestSlice({name: 'simpleSlice'});
 
-const authSlice = createSlice({
-    name: "auth",
-    initialState: {},
-    reducers: {
-        sentLoginRequest: (state, action) => {},
-        onRequestSuccess: (state, action) => {},
-        onRequestFailure: (state, action) => {}
-    },
-});
-
-/**
- 
-  Following function will:
-  
-  POST request to '0.0.0.0:5000/api/dummy/login'
-  Include body with parameters
-  Define slice handlers on request sent, success and failure
-  
-  It will also include authentication data with axios post function:
- 
-  axios.post(fullUrl, body, { withCredentials: true, headers: _getAuthenticationHeaders() });
-     
-  Where authentication headers are:
-    Accept: "application/json",
-    "X-Requested-With": "XMLHttpRequest",
-    "X-CSRFTOKEN": new Cookies().get("csrftoken"),
- 
- */
-
-export const sendLogin = (user: string, password: string) => {
-    return sendPost({
-        apiUrl: '0.0.0.0:5000/api',
-        path: 'dummy/login',
-        onBefore: sentLoginRequest,
-        onSuccess: loginSuccess,
-        onFail: loginFailed,
-        responseParser: customResponseParser,
-        body: {email: user, password: password},
-        withAuthentication: true // if false it won't include auth headers
-    });
+export const tryLogin = (user: string, password: string) => {
+    return sendPostRequest({
+        apiUrl: '127.0.0.1:8000/api',
+        path: 'login',
+        withCredentials: true,
+        headers: {}
+    }, simpleSlice);
 };
 
-
-export const {
-    sentLoginRequest,
-    loginSuccess,
-    loginFailed,
-} = authSlice.actions;
-
-export default authSlice.reducer;
+export default simpleSlice.reducer;
 ```
 
-GET request:
+## Example usage for slice with many requests
+
+
+This example slice file has multiple exposed functions 
+that do call this library requests.
+
+
 
 ```js
-import {createSlice} from "@reduxjs/toolkit";
-import {customResponseParser, sendGet} from "axios-client-wrapper";
 
-const myDataSlice = createSlice({
-    name: "mydata",
-    initialState: {},
+export interface ITestSliceState {
+    data: object
+}
+
+// Create slice
+const testSlice = createSlice({
+    name: 'testReducer',
+    initialState: {
+        data: null
+    } as ITestSliceState,
+
+    // Create reducer that will be passed as request argument
+    // It will be called before request and after (either on success or on failure)
     reducers: {
-        sentGetData: (state, action) => {
-            // do sth with action.payload.data
-        },
-        onGetDataSuccess: (state, action) => {
-            // do sth with action.payload.data
-        },
-        onGetDataFailure: (state, action) => {
-            // do sth with action.payload.errors
+        someReducer: (state: ITestSliceState, action: PayloadAction<ResponseArgs>) => {
+            const {path, status, requestData, responseData, errors} = action.payload;
+            state.data = responseData;
+            // do something based on 'path' identifier or data received 
         }
-    },
+    }
 });
 
-/**
-  GET request to '0.0.0.0:5000/api/dummy/data'
- */
+export const postSomething = (requestData: object) => {
+    return post({ apiUrl: 'api/', path: 'someEndpoint', reducer: someReducer, requestData: requestData});
+};
 
-export const requestData = (user: string, password: string) => {
-    return sendGet({
-        apiUrl: '0.0.0.0:5000/api',
-        path: 'dummy/data',
-        onBefore: sentGetData,
-        onSuccess: onGetDataSuccess,
-        onFail: onGetDataFailure,
-        responseParser: customResponseParser,
-        params: {}, // GET params parsed into ?param1=value1?param2=value2 ...
-        withAuthentication: true
-    });
+export const postSomethingElse = (requestData: object) => {
+    return post({ apiUrl: 'api/', path: 'someOtherEndpoint', reducer: someReducer, requestData: requestData});
 };
 
 
-export const {
-    sentGetData,
-    onGetDataSuccess,
-    onGetDataFailure,
-} = myDataSlice.actions;
+export const selectData = state => state.someSlice.data;
 
-export default myDataSlice.reducer;
+export const {someReducer} = testSlice.actions;
+
+export default testSlice.reducer;
 ```
