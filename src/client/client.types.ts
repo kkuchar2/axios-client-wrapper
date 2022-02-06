@@ -5,11 +5,11 @@ import { AxiosRequestHeaders} from "axios";
 
 export enum RequestStatus { Unknown, Waiting, Success, Failure}
 
-export interface ResponseArgs {
+export interface ResponseArgs<T = any> {
   path: string;
   status: RequestStatus;
   requestData: object;
-  responseData: object;
+  responseData: T;
   errors: Array<any>;
 }
 
@@ -21,9 +21,9 @@ export interface BaseRequestArgs {
   headers?: AxiosRequestHeaders;
 }
 
-export interface RequestArgs extends BaseRequestArgs {
+export interface RequestArgs<T = any> extends BaseRequestArgs {
   requestData?: object;
-  reducer: (params: ResponseArgs) => AnyAction;
+  reducer: (params: ResponseArgs<T>) => AnyAction;
 }
 
 export interface BaseFileRequestArgs extends BaseRequestArgs {

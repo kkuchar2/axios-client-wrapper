@@ -28,7 +28,7 @@ export const render = (
     return rtlRender(ui, {wrapper: Wrapper, ...renderOptions});
 }
 
-export const testCorrectStateUpdate = async (status: RequestStatus, path: string, requestData: object, responseData: object) => {
+export const testCorrectStateUpdate = async  <T, > (status: RequestStatus, path: string, requestData: object, responseData: T) => {
     await waitFor(() => {
         expect(screen.getByRole('status')).toHaveTextContent(status.toString())
         expect(screen.getByRole('path')).toHaveTextContent(path)
