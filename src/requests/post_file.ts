@@ -4,7 +4,7 @@ import {buildApiUrl} from "../common";
 import {dispatchOnBefore, handleErrors, sendPostFile} from "../client/client.utils";
 import {FileRequestArgs} from "../client/client.types";
 
-export const postFile = (args: FileRequestArgs) => {
+export const postFile = <T = any> (args: FileRequestArgs) => {
   const {
     apiUrl,
     path,
@@ -24,7 +24,7 @@ export const postFile = (args: FileRequestArgs) => {
       responseParser({
         path,
         dispatch,
-        responseData: await sendPostFile(
+        responseData: await sendPostFile<T>(
             buildApiUrl(apiUrl, path),
             file,
             filePropertyName,

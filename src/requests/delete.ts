@@ -4,7 +4,7 @@ import { buildApiUrl } from "../common";
 import { RequestArgs } from "../client/client.types";
 import { dispatchOnBefore, handleErrors, sendDelete } from "../client/client.utils";
 
-export const del = (args: RequestArgs) => {
+export const del = <T = any> (args: RequestArgs) => {
   const {
     apiUrl,
     path,
@@ -22,7 +22,7 @@ export const del = (args: RequestArgs) => {
       responseParser({
         path,
         dispatch,
-        responseData: await sendDelete(buildApiUrl(apiUrl, path), requestData, withCredentials, headers),
+        responseData: await sendDelete<T>(buildApiUrl(apiUrl, path), requestData, withCredentials, headers),
         requestData,
         reducer
       });

@@ -4,7 +4,7 @@ import {buildApiUrl} from "../common";
 import {RequestArgs} from "../client/client.types";
 import {dispatchOnBefore, handleErrors, sendPost} from "../client/client.utils";
 
-export const post = (args: RequestArgs) => {
+export const post = <T = any> (args: RequestArgs) => {
     const {
         apiUrl,
         path,
@@ -22,7 +22,7 @@ export const post = (args: RequestArgs) => {
             responseParser({
                 path,
                 dispatch,
-                responseData: await sendPost(buildApiUrl(apiUrl, path), requestData, withCredentials, headers),
+                responseData: await sendPost<T>(buildApiUrl(apiUrl, path), requestData, withCredentials, headers),
                 requestData,
                 reducer
             });

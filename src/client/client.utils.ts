@@ -4,41 +4,41 @@ import {Dispatch} from "redux";
 import {RequestStatus, ResponseArgs} from "./client.types";
 
 export enum ErrorType {
-  NetworkError,
-  EmptyResponse,
-  EmptyResponseData,
-  Unauthorized,
-  ServerError,
-  Unknown,
+    NetworkError,
+    EmptyResponse,
+    EmptyResponseData,
+    Unauthorized,
+    ServerError,
+    Unknown,
 }
 
-export const sendGet = async <T = any> (
+export const sendGet = async <T = any>(
     url: string,
     requestData: object,
     withCredentials: boolean,
     headers: AxiosRequestHeaders,
 ) => {
-  return axios.get<T>(composeUrl(url, requestData), {
-    withCredentials: withCredentials,
-    headers: headers,
-  });
+    return axios.get<T>(composeUrl(url, requestData), {
+        withCredentials: withCredentials,
+        headers: headers,
+    });
 };
 
 
-export const sendPost = async (
+export const sendPost = async <T = any>(
     url: string,
     requestData: object,
     withCredentials: boolean,
     headers: AxiosRequestHeaders,
 ) => {
-  return axios.post(url, {
-    data: requestData,
-    withCredentials: withCredentials,
-    headers: headers,
-  });
+    return axios.post<T>(url, {
+        data: requestData,
+        withCredentials: withCredentials,
+        headers: headers,
+    });
 };
 
-export const sendPostFile = async (
+export const sendPostFile = async <T = any>(
     url: string,
     file: File,
     filePropertyName: string,
@@ -46,36 +46,36 @@ export const sendPostFile = async (
     headers: AxiosRequestHeaders,
     onUploadProgress: (progressEvent: any) => void,
 ) => {
-  return axios.post(url, createFormDataFromFile(file, filePropertyName), {
-    withCredentials: withCredentials,
-    headers: headers,
-    onUploadProgress: onUploadProgress,
-  });
+    return axios.post<T>(url, createFormDataFromFile(file, filePropertyName), {
+        withCredentials: withCredentials,
+        headers: headers,
+        onUploadProgress: onUploadProgress,
+    });
 };
 
-export const sendDelete = async (
+export const sendDelete = async <T = any>(
     url: string,
     requestData: object,
     withCredentials: boolean,
     headers: AxiosRequestHeaders,
 ) => {
-  return axios.delete(url, {
-    data: requestData,
-    withCredentials: withCredentials,
-    headers: headers,
-  });
+    return axios.delete<T>(url, {
+        data: requestData,
+        withCredentials: withCredentials,
+        headers: headers,
+    });
 };
 
-export const sendPut = async (
+export const sendPut = async <T = any>(
     url: string,
     requestData: object,
     withCredentials: boolean,
     headers: AxiosRequestHeaders,
 ) => {
-  return axios.put(url, requestData, {
-    withCredentials: withCredentials,
-    headers: headers,
-  });
+    return axios.put<T>(url, requestData, {
+        withCredentials: withCredentials,
+        headers: headers,
+    });
 };
 
 export const dispatchError = (
@@ -87,24 +87,24 @@ export const dispatchError = (
     errorType: ErrorType,
     message: string,
 ) => {
-  dispatch(
-      reducer({
-        status: RequestStatus.Failure,
-        path: url,
-        requestData: requestData,
-        responseData: {
-          errorData: responseData.data,
-          status: responseData.status,
-          statusText: responseData.statusText,
-          headers: responseData.headers
-        },
-        errors: [
-          {
-            request: [{type: errorType, message: message, url}],
-          },
-        ]
-      }),
-  );
+    dispatch(
+        reducer({
+            status: RequestStatus.Failure,
+            path: url,
+            requestData: requestData,
+            responseData: {
+                errorData: responseData.data,
+                status: responseData.status,
+                statusText: responseData.statusText,
+                headers: responseData.headers
+            },
+            errors: [
+                {
+                    request: [{type: errorType, message: message, url}],
+                },
+            ]
+        }),
+    );
 };
 
 export const dispatchOtherError = (
@@ -115,11 +115,11 @@ export const dispatchOtherError = (
     responseData: AxiosResponse,
     errors: object[],
 ) => dispatch(reducer({
-  path: path,
-  status: RequestStatus.Failure,
-  requestData: requestData,
-  responseData: responseData,
-  errors: errors
+    path: path,
+    status: RequestStatus.Failure,
+    requestData: requestData,
+    responseData: responseData,
+    errors: errors
 }));
 
 export const dispatchSuccess = (
@@ -129,11 +129,11 @@ export const dispatchSuccess = (
     requestData: object,
     responseData: AxiosResponse,
 ) => dispatch(reducer({
-  errors: [],
-  path: path,
-  status: RequestStatus.Success,
-  requestData: requestData,
-  responseData: responseData
+    errors: [],
+    path: path,
+    status: RequestStatus.Success,
+    requestData: requestData,
+    responseData: responseData
 }));
 
 export const dispatchOnBefore = (
@@ -142,7 +142,13 @@ export const dispatchOnBefore = (
     path: string,
     requestData: object
 ) => {
-  dispatch(reducer({path: path, status: RequestStatus.Waiting, requestData: requestData, responseData: null, errors: []}));
+    dispatch(reducer({
+        path: path,
+        status: RequestStatus.Waiting,
+        requestData: requestData,
+        responseData: null,
+        errors: []
+    }));
 };
 
 export const handleErrors = (
@@ -152,37 +158,37 @@ export const handleErrors = (
     onFail: (params: ResponseArgs) => AnyAction,
     dispatch: Dispatch,
 ) => {
-  if (e.message === "Network Error") {
-    dispatchError(dispatch, onFail, path, requestData, null, ErrorType.NetworkError, "Network Error");
-    return;
-  }
+    if (e.message === "Network Error") {
+        dispatchError(dispatch, onFail, path, requestData, null, ErrorType.NetworkError, "Network Error");
+        return;
+    }
 
-  if (!e.response) {
-    dispatchError(dispatch, onFail, path, requestData, null, ErrorType.EmptyResponse, "The response is empty");
-    return;
-  }
+    if (!e.response) {
+        dispatchError(dispatch, onFail, path, requestData, null, ErrorType.EmptyResponse, "The response is empty");
+        return;
+    }
 
-  if (e.response.status === 401) {
-    dispatchError(dispatch, onFail, path, requestData, e.response, ErrorType.Unauthorized, "Unauthorized");
-  } else if (e.response.status === 422) {
-    dispatchError(dispatch, onFail, path, requestData, e.response, ErrorType.ServerError, "Server error");
-  } else {
-    dispatchError(dispatch, onFail, path, requestData, e.response, ErrorType.Unknown, e.response);
-  }
+    if (e.response.status === 401) {
+        dispatchError(dispatch, onFail, path, requestData, e.response, ErrorType.Unauthorized, "Unauthorized");
+    } else if (e.response.status === 422) {
+        dispatchError(dispatch, onFail, path, requestData, e.response, ErrorType.ServerError, "Server error");
+    } else {
+        dispatchError(dispatch, onFail, path, requestData, e.response, ErrorType.Unknown, e.response);
+    }
 };
 
 const createFormDataFromFile = (file: File, propertyName: string) => {
-  const formData = new FormData();
-  formData.append(propertyName, file);
-  return formData;
+    const formData = new FormData();
+    formData.append(propertyName, file);
+    return formData;
 };
 
 export const composeUrl = (url: string, requestData: object) => {
-  let parametrizedUrl = url;
+    let parametrizedUrl = url;
 
-  for (const [key, value] of Object.entries(requestData)) {
-    parametrizedUrl += `?${key}=${value}`;
-  }
+    for (const [key, value] of Object.entries(requestData)) {
+        parametrizedUrl += `?${key}=${value}`;
+    }
 
-  return parametrizedUrl;
+    return parametrizedUrl;
 };
