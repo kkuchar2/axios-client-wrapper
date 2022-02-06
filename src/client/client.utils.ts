@@ -12,13 +12,13 @@ export enum ErrorType {
   Unknown,
 }
 
-export const sendGet = async (
+export const sendGet = async <T = any> (
     url: string,
     requestData: object,
     withCredentials: boolean,
     headers: AxiosRequestHeaders,
 ) => {
-  return axios.get(composeUrl(url, requestData), {
+  return axios.get<T>(composeUrl(url, requestData), {
     withCredentials: withCredentials,
     headers: headers,
   });
