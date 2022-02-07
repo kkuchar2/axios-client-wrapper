@@ -6,11 +6,13 @@ import { AxiosRequestHeaders} from "axios";
 export enum RequestStatus { Unknown, Waiting, Success, Failure}
 
 export interface ResponseArgs<T = any> {
-  path: string;
-  status: RequestStatus;
-  requestData: object;
+  info: {
+    path: string;
+    status: RequestStatus,
+    requestData: object
+    errors: Array<any>;
+  }
   responseData: T;
-  errors: Array<any>;
 }
 
 export interface BaseRequestArgs {

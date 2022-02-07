@@ -9,26 +9,27 @@ export const createBaseRequestSlice = <Reducers extends SliceCaseReducers<Respon
   return createSlice({
     name: name,
     initialState: {
-      path: "",
-      status: RequestStatus.Unknown,
-      requestData: {},
-      responseData: null,
-      errors: [],
+      info: {
+        path: '',
+        status: RequestStatus.Unknown,
+        requestData: {},
+        errors: []
+      },
+      responseData: null
     } as ResponseArgs,
     reducers: {
       reducer: (state: ResponseArgs, action: PayloadAction<ResponseArgs>) => {
-        state.path = action.payload.path;
-        state.responseData = action.payload.responseData;
-        state.status = action.payload.status;
-        state.requestData = action.payload.requestData;
+        state.info = action.payload.info;
         state.responseData = action.payload.responseData;
       },
       onReset: (state: ResponseArgs) => {
-        state.path = "";
-        state.status = RequestStatus.Unknown;
-        state.requestData = {};
-        state.responseData = null;
-        state.errors = [];
+        state.info = {
+          path: '',
+          status: RequestStatus.Unknown,
+          requestData: {},
+          errors: []
+        }
+        state.responseData = {}
       },
       ...reducers,
     },
