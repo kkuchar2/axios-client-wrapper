@@ -68,7 +68,8 @@ const testSlice = createSlice({
     // It will be called before request and after (either on success or on failure)
     reducers: {
         someReducer: (state: ITestSliceState, action: PayloadAction<ResponseArgs>) => {
-            const {path, status, requestData, responseData, errors} = action.payload;
+            const {path, status, requestData, errors} = action.payload.info;
+            const responseData = action.payload.responseData;
             state.data = responseData;
             // do something based on 'path' identifier or data received 
         }

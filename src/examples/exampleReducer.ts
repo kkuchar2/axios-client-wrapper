@@ -14,14 +14,14 @@ const exampleSlice = createSlice({
   } as IExampleSliceState,
   reducers: {
     requestReducer: (state: IExampleSliceState, action: PayloadAction<ResponseArgs>) => {
-      state.requestStates[action.payload.path] = action.payload;
+      state.requestStates[action.payload.info.path] = action.payload;
 
       // Optional logic:
-      if (action.payload.path === 'login') {
+      if (action.payload.info.path === 'login') {
         // do something
       }
 
-      if (action.payload.path === 'register') {
+      if (action.payload.info.path === 'register') {
         // do something
       }
     },

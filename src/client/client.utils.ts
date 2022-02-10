@@ -89,20 +89,22 @@ export const dispatchError = (
 ) => {
     dispatch(
         reducer({
-            status: RequestStatus.Failure,
-            path: url,
-            requestData: requestData,
+            info: {
+                status: RequestStatus.Failure,
+                path: url,
+                requestData: requestData,
+                errors: [
+                    {
+                        request: [{type: errorType, message: message, url}],
+                    },
+                ]
+            },
             responseData: {
-                errorData: responseData.data,
+                data: responseData.data,
                 status: responseData.status,
                 statusText: responseData.statusText,
                 headers: responseData.headers
-            },
-            errors: [
-                {
-                    request: [{type: errorType, message: message, url}],
-                },
-            ]
+            }
         }),
     );
 };
@@ -115,11 +117,13 @@ export const dispatchOtherError = (
     responseData: AxiosResponse,
     errors: object[],
 ) => dispatch(reducer({
-    path: path,
-    status: RequestStatus.Failure,
-    requestData: requestData,
+    info: {
+        path: path,
+        status: RequestStatus.Failure,
+        requestData: requestData,
+        errors: errors
+    },
     responseData: responseData,
-    errors: errors
 }));
 
 export const dispatchSuccess = (
@@ -129,10 +133,12 @@ export const dispatchSuccess = (
     requestData: object,
     responseData: AxiosResponse,
 ) => dispatch(reducer({
-    errors: [],
-    path: path,
-    status: RequestStatus.Success,
-    requestData: requestData,
+    info: {
+        path: path,
+        status: RequestStatus.Success,
+        requestData: requestData,
+        errors: [],
+    },
     responseData: responseData
 }));
 
@@ -143,11 +149,13 @@ export const dispatchOnBefore = (
     requestData: object
 ) => {
     dispatch(reducer({
-        path: path,
-        status: RequestStatus.Waiting,
-        requestData: requestData,
+        info: {
+            path: path,
+            status: RequestStatus.Waiting,
+            requestData: requestData,
+            errors: []
+        },
         responseData: null,
-        errors: []
     }));
 };
 

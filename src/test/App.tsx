@@ -22,22 +22,36 @@ export const App = (props: AppProps) => {
         dispatch(requestFunc(requestData))
     }, []);
 
-    const renderProperty = useCallback((propertyName: string) => {
+    const renderInfoProperty = useCallback((propertyName: string) => {
         if (!requestState) return;
 
-        if (!requestState[propertyName]) {
+        if (!requestState.info[propertyName]) {
             return <div role={propertyName}>{'null'}</div>
         }
 
-        return <div role={propertyName}>{JSON.stringify(requestState[propertyName])}</div>;
+
+
+        return <div role={propertyName}>{JSON.stringify(requestState.info[propertyName])}</div>;
 
     }, [requestState]);
 
+    const renderResponseProperty = useCallback(() => {
+        if (!requestState) return;
+
+        if (!requestState.responseData) {
+            return <div role={'responseData'}>{'null'}</div>
+        }
+
+        return <div role={'responseData'}>{JSON.stringify(requestState.responseData)}</div>;
+
+    }, [requestState]);
+
+
     return <div>
         <button role={'reset'}>Reset state</button>
-        {renderProperty('status')}
-        {renderProperty('path')}
-        {renderProperty('requestData')}
-        {renderProperty('responseData')}
+        {renderInfoProperty('status')}
+        {renderInfoProperty('path')}
+        {renderInfoProperty('requestData')}
+        {renderResponseProperty()}
     </div>
 };

@@ -13,7 +13,7 @@ const testSlice = createSlice({
     } as ITestSliceState,
     reducers: {
         requestsReducer: (state: ITestSliceState, action: PayloadAction<ResponseArgs>) => {
-            state.requestStates[action.payload.path] = action.payload;
+            state.requestStates[action.payload.info.path] = action.payload;
         }
     }
 });
