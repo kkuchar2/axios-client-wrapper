@@ -31,8 +31,7 @@ export const sendPost = async <T = any>(
     withCredentials: boolean,
     headers: AxiosRequestHeaders,
 ) => {
-    return axios.post<T>(url, {
-        data: requestData,
+    return axios.post<T>(url, requestData, {
         withCredentials: withCredentials,
         headers: headers,
     });
