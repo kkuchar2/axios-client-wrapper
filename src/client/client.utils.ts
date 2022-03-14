@@ -82,10 +82,11 @@ export const dispatchError = (
     reducer: (params: ResponseArgs) => AnyAction,
     url: string,
     requestData: object,
-    responseData: AxiosResponse,
+    responseData: AxiosResponse | null | undefined,
     errorType: ErrorType,
     message: string,
 ) => {
+
     dispatch(
         reducer({
             info: {
@@ -98,7 +99,7 @@ export const dispatchError = (
                     },
                 ]
             },
-            responseData: {
+            responseData: !responseData ? {} : {
                 data: responseData.data,
                 status: responseData.status,
                 statusText: responseData.statusText,
@@ -113,7 +114,7 @@ export const dispatchOtherError = (
     reducer: (params: ResponseArgs) => AnyAction,
     path: string,
     requestData: object,
-    responseData: AxiosResponse,
+    responseData: AxiosResponse | null | undefined,
     errors: object[],
 ) => dispatch(reducer({
     info: {
@@ -122,7 +123,7 @@ export const dispatchOtherError = (
         requestData: requestData,
         errors: errors
     },
-    responseData: responseData,
+    responseData: !responseData ? {} : responseData,
 }));
 
 export const dispatchSuccess = (
@@ -130,7 +131,7 @@ export const dispatchSuccess = (
     reducer: (params: ResponseArgs) => AnyAction,
     path: string,
     requestData: object,
-    responseData: AxiosResponse,
+    responseData: AxiosResponse | null | undefined,
 ) => dispatch(reducer({
     info: {
         path: path,
@@ -138,7 +139,7 @@ export const dispatchSuccess = (
         requestData: requestData,
         errors: [],
     },
-    responseData: responseData
+    responseData: !responseData ? {} : responseData
 }));
 
 export const dispatchOnBefore = (
