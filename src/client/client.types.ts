@@ -12,7 +12,7 @@ export interface ResponseArgs<T = any> {
     requestData: object
     errors: Array<any>;
   }
-  responseData: T;// :O
+  responseData: T | undefined;
 }
 
 export interface BaseRequestArgs {
