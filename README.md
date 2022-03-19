@@ -35,7 +35,7 @@ someSlice.ts:
 
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {RootState} from "appRedux/store";
-import {RequestStatus, ResponseArgs, defaultResponseArgs} from "axios-client-wrapper";
+import {RequestStatus, ResponseArgs, DefaultResponseArgs} from "axios-client-wrapper";
 
 interface ISliceState {
     changeEmailAddress: ResponseArgs
@@ -45,7 +45,7 @@ interface ISliceState {
 export const someSlice = createSlice({
     name: "someSlice",
     initialState: {
-        changeEmailAddress: defaultResponseArgs(),
+        changeEmailAddress: DefaultResponseArgs(),
     } as ISliceState,
     reducers: {
         changeEmailAddress: (state: IUserSliceState, action: PayloadAction<ResponseArgs>) => {
