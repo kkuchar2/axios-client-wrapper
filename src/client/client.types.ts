@@ -4,10 +4,10 @@ import { ResponseParserProps } from "../responseParsers";
 import { AxiosRequestHeaders} from "axios";
 
 export enum RequestStatus {
-  Unknown = "Unknown",
-  Waiting = "Waiting",
-  Success = "Success",
-  Failure = "Failure"
+  Unknown = "UNKNOWN",
+  Waiting = "WAITING",
+  Success = "SUCCESS",
+  Failure = "FAILED"
 }
 
 export interface ResponseArgs<T = any> {
