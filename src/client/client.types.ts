@@ -3,7 +3,12 @@ import { AnyAction } from "@reduxjs/toolkit";
 import { ResponseParserProps } from "../responseParsers";
 import { AxiosRequestHeaders} from "axios";
 
-export enum RequestStatus { Unknown, Waiting, Success, Failure}
+export enum RequestStatus {
+  Unknown = "Unknown",
+  Waiting = "Waiting",
+  Success = "Success",
+  Failure = "Failure"
+}
 
 export interface ResponseArgs<T = any> {
   info: {
