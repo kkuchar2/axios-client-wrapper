@@ -4,12 +4,12 @@ import {Dispatch} from "redux";
 import {RequestStatus, ResponseArgs} from "./client.types";
 
 export enum ErrorType {
-    NetworkError,
-    EmptyResponse,
-    EmptyResponseData,
-    Unauthorized,
-    ServerError,
-    Unknown,
+    NetworkError = "NETWORK_ERROR",
+    EmptyResponse = "EMPTY_RESPONSE",
+    EmptyResponseData = "EMPTY_RESPONSE_DATA",
+    Unauthorized = "UNAUTHORIZED",
+    ServerError = "SERVER_ERROR",
+    Unknown = "UNKNOWN"
 }
 
 export const sendGet = async <T = any>(
