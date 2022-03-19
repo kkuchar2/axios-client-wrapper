@@ -26,68 +26,56 @@ npm i axios-client-wrapper
 yarn add axios-client-wrapper
 ```
 
-## Example usage with simple slice just for one request
 
-```js
-const simpleSlice = createBaseRequestSlice({name: 'simpleSlice'});
+Example:
 
-export const tryLogin = (user: string, password: string) => {
-    return sendPostRequest({
-        apiUrl: '127.0.0.1:8000/api',
-        path: 'login',
-        withCredentials: true,
-        headers: {}
-    }, simpleSlice);
-};
-
-export default simpleSlice.reducer;
-```
-
-## Example usage for slice with many requests
-
-
-This example slice file has multiple exposed functions 
-that do call this library requests.
-
-
+someSlice.ts:
 
 ```js
 
-export interface ITestSliceState {
-    data: object
+import {createSlice, PayloadAction} from "@reduxjs/toolkit";
+import {RootState} from "appRedux/store";
+import {RequestStatus, ResponseArgs, defaultResponseArgs} from "axios-client-wrapper";
+
+interface ISliceState {
+    changeEmailAddress: ResponseArgs
 }
 
-// Create slice
-const testSlice = createSlice({
-    name: 'testReducer',
-    initialState: {
-        data: null
-    } as ITestSliceState,
 
-    // Create reducer that will be passed as request argument
-    // It will be called before request and after (either on success or on failure)
+export const someSlice = createSlice({
+    name: "someSlice",
+    initialState: {
+        changeEmailAddress: defaultResponseArgs(),
+    } as ISliceState,
     reducers: {
-        someReducer: (state: ITestSliceState, action: PayloadAction<ResponseArgs>) => {
-            const {path, status, requestData, errors} = action.payload.info;
-            const responseData = action.payload.responseData;
-            state.data = responseData;
-            // do something based on 'path' identifier or data received 
-        }
+        changeEmailAddress: (state: IUserSliceState, action: PayloadAction<ResponseArgs>) => {
+            state.changeEmailAddress = action.payload;
+        },
     }
 });
 
-export const postSomething = (requestData: object) => {
-    return post({ apiUrl: 'api/', path: 'someEndpoint', reducer: someReducer, requestData: requestData});
+export const { actions } = someSlice;
+
+```
+
+someService.ts:
+
+```js
+
+import { actions } from "./someSlice";
+
+export const changeEmailAddress = (currentEmail: string, newEmail: string, password: string) => {
+    return post({
+        apiUrl: '0.0.0.0/api/',
+        path: 'changeEmail', 
+        reducer: actions.changeEmailAddress, // which reducer should be called on before / after dispatch
+        withCredentials: true,
+        requestData: {
+            currentEmail: currentEmail,
+            newEmail: newEmail,
+            password: password
+        },
+        headers: {}
+    });
 };
-
-export const postSomethingElse = (requestData: object) => {
-    return post({ apiUrl: 'api/', path: 'someOtherEndpoint', reducer: someReducer, requestData: requestData});
-};
-
-
-export const selectData = state => state.someSlice.data;
-
-export const {someReducer} = testSlice.actions;
-
-export default testSlice.reducer;
 ```

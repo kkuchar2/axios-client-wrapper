@@ -15,6 +15,18 @@ export interface ResponseArgs<T = any> {
   responseData: T | undefined;
 }
 
+export const DefaultResponseArgs = <T>() => {
+  return {
+    info: {
+      path: '',
+      status: RequestStatus.Unknown,
+      requestData: undefined,
+      errors: []
+    },
+    responseData: undefined
+  } as ResponseArgs<T>
+}
+
 export interface BaseRequestArgs {
   apiUrl: string;
   path: string;
